@@ -1,0 +1,132 @@
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
+        integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+        crossorigin=""/>
+  <!-- Make sure you put this AFTER Leaflet's CSS -->
+  <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
+          integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
+          crossorigin=""></script>
+  <script type="text/javascript">
+    function openTab(evt, tabName) {
+      // Declare all variables
+      //var mapLeaflet;
+      var i, tabcontent, tablinks;
+
+      // Get all elements with class="tabcontent" and hide them
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
+
+      // Get all elements with class="tablinks" and remove the class "active"
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+
+      // Show the current tab, and add an "active" class to the button that
+      // opened the tab
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.className += " active";
+    }
+  </script>
+  <title>Data Visualisation 0.0.1a</title>
+</head>
+
+<body>
+{{>mapLeafletVisual}}
+<div id="form"> <!--Div pour le formulaire-->
+  <div class="tab">
+    <button class="tablinks" onclick="openTab(event, 'Habitat')">Habitat
+    </button>
+    <button class="tablinks" onclick="openTab(event, 'Milieu')">Milieu</button>
+    <button class="tablinks" onclick="openTab(event, 'Espece')">Espece</button>
+    <button class="tablinks" onclick="openTab(event, 'Indésirable')">
+      Indésirable
+    </button>
+  </div>
+
+  <!-- Tab content -->
+  <div id="Habitat" class="tabcontent">
+    <h3>Habitat</h3>
+    <p>Formulaire de filtres pour les habitats..</p>
+  </div>
+
+  {{> environmentSelection}}
+
+  <div id="Espece" class="tabcontent">
+    <h3>Espece</h3>
+    <p>Formulaire de filtres pour les especes.</p>
+  </div>
+
+  <div id="Indésirable" class="tabcontent">
+    <h3>Indésirable</h3>
+    <p>Formulaire de filtres pour les éléments indésirables.</p>
+  </div>
+</div>
+
+<div id="filter"> <!--Div pour les filtres-->
+
+</div>
+</body>
+
+<template name="mapLeafletVisual">
+  <div id='map'></div>
+</template>
+
+<template name="environmentSelection">
+  <div id="Milieu" class="tabcontent">
+    <h3>Milieu</h3>
+
+    <label for="environment-1">
+      <input type="checkbox" name="Milieu aquatique et surface en eau"
+             id="environment-1" value="#28877B"/>Milieu aquatique et surface en
+      eau
+    </label>
+    <br/>
+    <label for="environment-2">
+      <input type="checkbox" name="Surfaces bâties végétalisées"
+             id="environment-2" value="#812887"/> Surfaces bâties végétalisées
+    </label>
+    <br/>
+    <label for="environment-3">
+      <input type="checkbox" name="Surfaces entiérement artificialisées"
+             id="environment-3" value="#AE7741"/> Surfaces entiérement
+      artificialisées
+    </label>
+    <br/>
+    <label for="environment-4">
+      <input type="checkbox"
+             name="Habitat sans végétation ou végetation clairsemée"
+             id="environment-4" value='#88A93B'/> Habitat sans végétation ou
+      végetation
+      clairsemée
+    </label>
+    <br/>
+    <label for="environment-5">
+      <input type="checkbox" name="Terrains agricoles et horticoles"
+             id="environment-5" value='#136049'/> Terrains agricoles et
+      horticoles
+    </label>
+    <br/>
+    <label for="environment-6">
+      <input type="checkbox" name="Terrains dominés par des herbacées"
+             id="environment-6" value="#C03000"/> Terrains dominés par des
+      herbacées
+    </label>
+    <br/>
+    <label for="environment-7">
+      <input type="checkbox" name="Boisements, forets et autres terrains boisés"
+             id="environment-7" value="#84815B"/> Boisement ,foret et
+      autre terrains boisés
+    </label>
+    <br/>
+    <label for="environment-8">
+      <input type="checkbox" name="Végétation arbustive" id="environment-8"
+             value="#8E3557"/> Végétation arbustive
+    </label>
+
+    <p>Formulaire de filtres pour le milieu.</p>
+  </div>
+</template>

@@ -1,0 +1,12 @@
+{
+  "name": "hello",
+  "private": true,
+  "scripts": {
+    "start": "meteor run"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.0.0-beta.42",
+    "cassandra-driver": "^3.4.1",
+    "meteor-node-stubs": "^0.3.2"
+  }
+}

@@ -13,7 +13,7 @@ import {Meteor} from 'meteor/meteor';
 var mapLeaflet;
 
 Template.mapLeafletVisual.rendered = function () {
-  mapLeaflet = new MapLeaflet('map');
+  mapLeaflet = new MapLeaflet('basicMap');
 };
 
 Template.environmentSelection.events = {
@@ -22,8 +22,10 @@ Template.environmentSelection.events = {
                                              // checkbox
     let id = $(event.target).attr('id');
     let color = $(event.target).attr('value');
-    console.log("===  name  ===");
-    console.log(name);
+
+    let class_item = $(event.target).attr('class');
+    console.log("classe : " + class_item);
+
     let cql = "SELECT * FROM databio.habitat WHERE milieu = '" + name + "';";
     console.log("cql : " + cql);
 

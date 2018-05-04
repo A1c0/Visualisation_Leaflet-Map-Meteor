@@ -2,6 +2,10 @@ const MapLeaflet = function (div) {
   this.arrayElement = [];
   this.map = new LMap(div);
 
+  this.getArrayElement = function () {
+    return this.arrayElement;
+  };
+
   this.addElement = function (element) {
     this.arrayElement.push(element);
   };
@@ -26,15 +30,19 @@ const MapLeaflet = function (div) {
 
   this.removeAllElement = function () {
     this.arrayElement.splice(0, this.arrayElement.length);
-  }
+  };
 
   this.clearAll = function () {
     this.map.clearAllMarker();
   };
 
-  this.update = function () {
+  this.updateMap = function () {
+    /*console.log("on tente un update");
+    console.log("longueur : " + this.arrayElement.length);
+    console.log(this.arrayElement);*/
+
     this.clearAll();
-    for (let i = 0; i < this.arrayElement.length; i++) {
+    for (let i = 0; i < this.arrayElement.length; i++){
       this.map.addCircle(this.arrayElement[i]);
     }
   };

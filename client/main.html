@@ -47,150 +47,156 @@
   </div>
 
   <!-- Tab content -->
-  <div id="Espèce" class="tabcontent">
-    <label>Insectes</label><input type="checkbox" name="Insectes"><br>
-    <label>Mollusques</label><input type="checkbox" name="Mollusques"><br>
-    <label>Mammifères</label><input type="checkbox" name="Mammifères"><br>
-    <label>Oiseaux</label><input type="checkbox" name="Oiseaux"><br>
-    <label>Poissons</label><input type="checkbox" name="Poissons"><br>
-    <label>Amphibiens</label><input type="checkbox" name="Amphibiens"><br>
-    <label>Reptiles</label><input type="checkbox" name="Reptiles"><br>
-  </div>
+  {{> biotopeSelection}}
+  {{> specieSelection}}
+  {{> dateSelection}}
+  {{> regionSelection}}
+</div>
 
+<div id="filter"> <!--Div pour les filtres-->
+
+</div>
+</body>
+
+<template name="mapLeafletVisual">
+  <div id='basicMap'></div>
+</template>
+
+<template name="biotopeSelection">
   <div id="Biotope" class="tabcontent">
     <div class="band">
-      <input type="checkbox" name="Milieux aquatiques et surfaces en eau">
+      <input type="checkbox" id="environement1" name="Milieux aquatiques et surfaces en eau" class="environment">
       <button class="collapsible">Milieux aquatiques et surfaces en eau</button>
-      <div class="content">
-        <p>Lac, mare ou etang naturel ou semi-naturel<input type="checkbox" name="Lac, mare ou etang naturel ou semi-naturel"></p>
-        <p>Mare ou bassin artificiel végétalisé<input type="checkbox" name="Mare ou bassin artificiel végétalisé"></p>
-        <p>Pièce d'eau artificialisée<input type="checkbox" name="Pièce d'eau artificialisée"></p>
-        <p>Cours d'eau naturel ou semi-naturel<input type="checkbox" name="Cours d'eau naturel ou semi-naturel"></p>
-        <p>Cours d'eau artificialisé<input type="checkbox" name="Cours d'eau artificialisé"></p>
-        <p>Ripisylve<input type="checkbox" name="Ripisylve"></p>
-        <p>Berge herbeuse ou ripisylve en cours de renaturation<input type="checkbox" name="Berge herbeuse ou ripisylve en cours de renaturation"></p>
-        <p>Berge naturelle ou semi-naturelle sans végétation<input type="checkbox" name="Berge naturelle ou semi-naturelle sans végétation"></p>
-        <p>Berge semi-naturelle<input type="checkbox" name="Berge semi-naturelle"></p>
-        <p>Noue ou fosse végétalisée<input type="checkbox" name="Noue ou fosse végétalisée"></p>
-        <p>Noue ou fosse non végétalisée<input type="checkbox" name="Noue ou fosse non végétalisée"></p>
-        <p>Zone humide<input type="checkbox" name="Zone humide"></p>
-        <p>Autre habitat<input type="checkbox" name="Autre habitat"></p>
+      <div class="content" data-name="Milieux aquatiques et surfaces en eau">
+        <p><span class="tabulation"><input type="checkbox" id="habitat1" name="Lac, mare ou etang naturel ou semi-naturel" class="habitat">Lac, mare ou etang naturel ou semi-naturel</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat2" name="Mare ou bassin artificiel végétalisé" class="habitat">Mare ou bassin artificiel végétalisé</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat3" name="Pièce d'eau artificialisée" class="habitat">Pièce d'eau artificialisée</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat4" name="Cours d'eau naturel ou semi-naturel" class="habitat">Cours d'eau naturel ou semi-naturel</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat5" name="Cours d'eau artificialisé" class="habitat">Cours d'eau artificialisé</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat6" name="Ripisylve" class="habitat">Ripisylve</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat7" name="Berge herbeuse ou ripisylve en cours de renaturation" class="habitat">Berge herbeuse ou ripisylve en cours de renaturation</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat8" name="Berge naturelle ou semi-naturelle sans végétation" class="habitat">Berge naturelle ou semi-naturelle sans végétation</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat9" name="Berge semi-naturelle" class="habitat">Berge semi-naturelle</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat10" name="Noue ou fosse végétalisée" class="habitat">Noue ou fosse végétalisée</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat11" name="Noue ou fosse non végétalisée" class="habitat">Noue ou fosse non végétalisée</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat12" name="Zone humide" class="habitat">Zone humide</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat13" name="Autre habitat" class="habitat">Autre habitat</span></p>
       </div>
       <br>
-      <input type="checkbox" name="Surface bâtie végétalisée">
+      <input type="checkbox" id="environement2" name="Surface bâtie végétalisée" class="environment">
       <button class="collapsible">Surface bâtie végétalisée</button>
-      <div class="content">
-        <p>Parking végétalisé<input type="checkbox" name="Parking végétalisé"></p>
-        <p>Route ou chemin végétalisé<input type="checkbox" name="Route ou chemin végétalisé"></p>
-        <p>Espace minéral végétalisé<input type="checkbox" name="Espace minéral végétalisé"></p>
-        <p>Toiture végétalisé muscinale<input type="checkbox" name="Toiture végétalisé muscinale"></p>
-        <p>Toiture végétalisée herbacée<input type="checkbox" name="Toiture végétalisée herbacée"></p>
-        <p>Toiture végétalisée arbustive<input type="checkbox" name="Toiture végétalisée arbustive"></p>
-        <p>Toiture jardin<input type="checkbox" name="Toiture jardin"></p>
-        <p>Mur végétalisé<input type="checkbox" name="Mur végétalisé"></p>
-        <p>Autre habitat<input type="checkbox" name="Autre habitat"></p>
+      <div class="content" data-name="Surface bâtie végétalisée">
+        <p><span class="tabulation"><input type="checkbox" id="habitat14" name="Parking végétalisé" class="habitat">Parking végétalisé</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat15" name="Route ou chemin végétalisé" class="habitat">Route ou chemin végétalisé</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat16" name="Espace minéral végétalisé" class="habitat">Espace minéral végétalisé</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat17" name="Toiture végétalisé muscinale" class="habitat">Toiture végétalisé muscinale</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat18" name="Toiture végétalisée herbacée" class="habitat">Toiture végétalisée herbacée</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat19" name="Toiture végétalisée arbustive" class="habitat">Toiture végétalisée arbustive</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat20" name="Toiture jardin" class="habitat">Toiture jardin</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat21" name="Mur végétalisé" class="habitat">Mur végétalisé</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat22" name="Autre habitat" class="habitat">Autre habitat</span></p>
       </div>
       <br>
-      <input type="checkbox" name="Surface entièrement artificialisée">
+      <input type="checkbox" id="environement3" name="Surface entièrement artificialisée" class="environment">
       <button class="collapsible">Surface entièrement artificialisée</button>
-      <div class="content">
-        <p>Parking végétalisé<input type="checkbox" name="Parking végétalisé"></p>
-        <p>Bâtiment<input type="checkbox" name="Bâtiment"></p>
-        <p>Parking imperméable<input type="checkbox" name="Parking imperméable"></p>
-        <p>Parking semi-perméable<input type="checkbox" name="Parking semi-perméable"></p>
-        <p>Route ou chemin imperméable<input type="checkbox" name="Route ou chemin imperméable"></p>
-        <p>Route ou chemin semi-perméable<input type="checkbox" name="Route ou chemin semi-perméable"></p>
-        <p>Route ou chemin perméable<input type="checkbox" name="Route ou chemin perméable"></p>
-        <p>Surface minérale imperméable<input type="checkbox" name="Surface minérale imperméable"></p>
-        <p>Surface minérale semi-perméable<input type="checkbox" name="Surface minérale semi-perméable"></p>
-        <p>Berge artificielle<input type="checkbox" name="Berge artificielle"></p>
-        <p>Mur de pierres sèches<input type="checkbox" name="Mur de pierres sèches"></p>
-        <p>Gabion<input type="checkbox" name="Gabion"></p>
-        <p>Mur de béton<input type="checkbox" name="Mur de béton"></p>
-        <p>Construction ponctuelle<input type="checkbox" name="Construction ponctuelle"></p>
-        <p>Décharge<input type="checkbox" name="Décharge"></p>
-        <p>Autre habitat<input type="checkbox" name="Autre habitat"></p>
+      <div class="content" data-name="Surface entièrement artificialisée">
+        <p><span class="tabulation"><input type="checkbox" id="habitat23" name="Parking végétalisé" class="habitat">Parking végétalisé</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat24" name="Bâtiment" class="habitat">Bâtiment</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat25" name="Parking imperméable" class="habitat">Parking imperméable</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat26" name="Parking semi-perméable" class="habitat">Parking semi-perméable</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat27" name="Route ou chemin imperméable" class="habitat">Route ou chemin imperméable</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat28" name="Route ou chemin semi-perméable" class="habitat">Route ou chemin semi-perméable</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat29" name="Route ou chemin perméable" class="habitat">Route ou chemin perméable</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat30" name="Surface minérale imperméable" class="habitat">Surface minérale imperméable</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat31" name="Surface minérale semi-perméable" class="habitat">Surface minérale semi-perméable</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat32" name="Berge artificielle" class="habitat">Berge artificielle</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat33" name="Mur de pierres sèches" class="habitat">Mur de pierres sèches</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat34" name="Gabion" class="habitat">Gabion</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat35" name="Mur de béton" class="habitat">Mur de béton</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat36" name="Construction ponctuelle" class="habitat">Construction ponctuelle</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat37" name="Décharge" class="habitat">Décharge</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat38" name="Autre habitat" class="habitat">Autre habitat</span></p>
       </div>
       <br>
-      <input type="checkbox" name="Habitat sans végétation ou à végétation clairsemée">
+      <input type="checkbox" id="environement4" name="Habitat sans végétation ou à végétation clairsemée" class="environment">
       <button class="collapsible">Habitat sans végétation ou à végétation clairsemée</button>
-      <div class="content">
-        <p>Sol nu avec ou sans végétation clairsemée<input type="checkbox" name="Sol nu avec ou sans végétation clairsemée"></p>
-        <p>Rocher avec ou sans végétation clairsemée<input type="checkbox" name="Rocher avec ou sans végétation clairsemée"></p>
-        <p>Autre habitat<input type="checkbox" name="Autre habitat"></p>
+      <div class="content" data-name="Habitat sans végétation ou à végétation clairsemée">
+        <p><span class="tabulation"><input type="checkbox" id="habitat39" name="Sol nu avec ou sans végétation clairsemée" class="habitat">Sol nu avec ou sans végétation clairsemée</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat40" name="Rocher avec ou sans végétation clairsemée" class="habitat">Rocher avec ou sans végétation clairsemée</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat41" name="Autre habitat" class="habitat">Autre habitat</span></p>
       </div>
       <br>
-      <input type="checkbox" name="Terrains agricoles et horticoles">
+      <input type="checkbox" id="environement5" name="Terrains agricoles et horticoles" class="environment">
       <button class="collapsible">Terrains agricoles et horticoles</button>
-      <div class="content">
-        <p>Verger<input type="checkbox" name="Verger"></p>
-        <p>Plantation d'arbustes<input type="checkbox" name="Plantation d'arbustes"></p>
-        <p>Culture maraîchère et horticole<input type="checkbox" name="Culture maraîchère et horticole"></p>
-        <p>Potager (en plein terre ou sur dalles)<input type="checkbox" name="Potager (en plein terre ou sur dalles)"></p>
-        <p>Potager hors sol<input type="checkbox" name="Potager hors sol"></p>
-        <p>Culture arable<input type="checkbox" name="Culture arable"></p>
-        <p>Jachère agricole<input type="checkbox" name="Jachère agricole"></p>
-        <p>Prairie agricole<input type="checkbox" name="Prairie agricole"></p>
-        <p>Autre habitat<input type="checkbox" name="Autre habitat"></p>
+      <div class="content" data-name="Terrains agricoles et horticoles">
+        <p><span class="tabulation"><input type="checkbox" id="habitat42" name="Verger" class="habitat">Verger</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat43" name="Plantation d'arbustes" class="habitat">Plantation d'arbustes</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat44" name="Culture maraîchère et horticole" class="habitat">Culture maraîchère et horticole</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat45" name="Potager (en plein terre ou sur dalles)" class="habitat">Potager (en plein terre ou sur dalles)</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat46" name="Potager hors sol" class="habitat">Potager hors sol</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat47" name="Culture arable" class="habitat">Culture arable</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat48" name="Jachère agricole" class="habitat">Jachère agricole</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat49" name="Prairie agricole" class="habitat">Prairie agricole</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat50" name="Autre habitat" class="habitat">Autre habitat</span></p>
       </div>
       <br>
-      <input type="checkbox" name="Terrains dominés par des herbacées">
+      <input type="checkbox" id="environement6" name="Terrains dominés par des herbacées" class="environment">
       <button class="collapsible">Terrains dominés par des herbacées</button>
-      <div class="content">
-        <p>Friche urbaine herbacée en plein terre ou sur dalles<input type="checkbox" name="Friche urbaine herbacée en plein terre ou sur dalles"></p>
-        <p>Friche urbaine herbacée envahie d'espèces invasives en plein terre ou sur dalles<input type="checkbox" name="Friche urbaine herbacée envahie d'espèces invasives en plein terre ou sur dalles"></p>
-        <p>Prairies fleurie en plein terre ou sur dalles<input type="checkbox" name="Prairies fleurie en plein terre ou sur dalles"></p>
-        <p>Pelouse en plein terre ou sur dalles<input type="checkbox" name="Pelouse en plein terre ou sur dalles"></p>
-        <p>Pelouse de terrain de sport en plein terre ou sur dalles<input type="checkbox" name="Pelouse de terrain de sport en plein terre ou sur dalles"></p>
-        <p>Jardin ornemental en plein terre ou sur dalles<input type="checkbox" name="Jardin ornemental en plein terre ou sur dalles"></p>
-        <p>Autre habitat<input type="checkbox" name="Autre habitat"></p>
+      <div class="content" data-name="Terrains dominés par des herbacées">
+        <p><span class="tabulation"><input type="checkbox" id="habitat51" name="Friche urbaine herbacée en plein terre ou sur dalles" class="habitat">Friche urbaine herbacée en plein terre ou sur dalles</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat52" name="Friche urbaine herbacée envahie d'espèces invasives en plein terre ou sur dalles" class="habitat">Friche urbaine herbacée envahie d'espèces invasives en plein terre ou sur dalles</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat53" name="Prairies fleurie en plein terre ou sur dalles" class="habitat">Prairies fleurie en plein terre ou sur dalles</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat54" name="Pelouse en plein terre ou sur dalles" class="habitat">Pelouse en plein terre ou sur dalles</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat55" name="Pelouse de terrain de sport en plein terre ou sur dalles" class="habitat">Pelouse de terrain de sport en plein terre ou sur dalles</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat56" name="Jardin ornemental en plein terre ou sur dalles" class="habitat">Jardin ornemental en plein terre ou sur dalles</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat57" name="Autre habitat" class="habitat">Autre habitat</span></p>
       </div>
       <br>
-      <input type="checkbox" name="Végétation arbustive">
+      <input type="checkbox" id="environement7" name="Boisement ,foret et autre terrains boisés" class="environment">
       <button class="collapsible">Boisement ,foret et autre terrains boisés</button>
-      <div class="content">
-        <p>Bois et forêts<input type="checkbox" name="Bois et forêts"></p>
-        <p>Plantation forestière<input type="checkbox" name="Plantation forestière"></p>
-        <p>Parc boisé sur herbacées hautes<input type="checkbox" name="Parc boisé sur herbacées hautes"></p>
-        <p>Parc boisé sur gazon<input type="checkbox" name="Parc boisé sur gazon"></p>
-        <p>Parc boisé sur sol artificialisé<input type="checkbox" name="Parc boisé sur sol artificialisé"></p>
-        <p>Haie haute libre<input type="checkbox" name="Haie haute libre"></p>
-        <p>Alignement d'arbres sur herbacées hautes<input type="checkbox" name="Alignement d'arbres sur herbacées hautes"></p>
-        <p>Alignement d'arbres sur gazon<input type="checkbox" name="Alignement d'arbres sur gazon"></p>
-        <p>Alignement d'arbres sur sol artificialisé<input type="checkbox" name="Alignement d'arbres sur sol artificialisé"></p>
-        <p>Arbre isolé sur herbacées hautes<input type="checkbox" name="Arbre isolé sur herbacées hautes"></p>
-        <p>Arbre isolé sur gazon<input type="checkbox" name="Arbre isolé sur gazon"></p>
-        <p>Arbre isolé sur sol artificialisé<input type="checkbox" name="Arbre isolé sur sol artificialisé"></p>
-        <p>Autre habitat<input type="checkbox" name="Autre habitat"></p>
+      <div class="content" data-name="Végétation arbustive">
+        <p><span class="tabulation"><input type="checkbox" id="habitat58" name="Bois et forêts" class="habitat">Bois et forêts</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat59" name="Plantation forestière" class="habitat">Plantation forestière</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat60" name="Parc boisé sur herbacées hautes" class="habitat">Parc boisé sur herbacées hautes</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat61" name="Parc boisé sur gazon" class="habitat">Parc boisé sur gazon</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat62" name="Parc boisé sur sol artificialisé" class="habitat">Parc boisé sur sol artificialisé</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat63" name="Haie haute libre" class="habitat">Haie haute libre</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat64" name="Alignement d'arbres sur herbacées hautes" class="habitat">Alignement d'arbres sur herbacées hautes</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat65" name="Alignement d'arbres sur gazon" class="habitat">Alignement d'arbres sur gazon</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat66" name="Alignement d'arbres sur sol artificialisé" class="habitat">Alignement d'arbres sur sol artificialisé</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat67" name="Arbre isolé sur herbacées hautes" class="habitat">Arbre isolé sur herbacées hautes</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat68" name="Arbre isolé sur gazon" class="habitat">Arbre isolé sur gazon</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat69" name="Arbre isolé sur sol artificialisé" class="habitat">Arbre isolé sur sol artificialisé</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat70" name="Autre habitat" class="habitat">Autre habitat</span></p>
       </div>
       <br>
-      <input type="checkbox" name="Boisements, forets et autres terrains boisés">
+      <input type="checkbox" id="environement8" name="Végétation arbustive" class="environment">
       <button class="collapsible">Végétation arbustive</button>
-      <div class="content">
-        <p>Lande ou brousaille<input type="checkbox" name="Lande ou brousaille"></p>
-        <p>Friche urbaine arbustive en plein terre ou sur dalles<input type="checkbox" name="Friche urbaine arbustive en plein terre ou sur dalles"></p>
-        <p>Friche urbaine envahie par les espèces invasives en plein terre ou sur dalles<input type="checkbox" name="Friche urbaine envahie par les espèces invasives en plein terre ou sur dalles"></p>
-        <p>Massif arbustif planté en plein terre ou sur dalles<input type="checkbox" name="Massif arbustif planté en plein terre ou sur dalles"></p>
-        <p>Haie basse libre en plein terre ou sur dalles<input type="checkbox" name="Haie basse libre en plein terre ou sur dalles"></p>
-        <p>Haie basse taillée en plein terre ou sur dalles<input type="checkbox" name="Haie basse taillée en plein terre ou sur dalles"></p>
-        <p>Arbuste isolé sur herbacées hautes en plein terre ou sur dalles<input type="checkbox" name="Arbuste isolé sur herbacées hautes en plein terre ou sur dalles"></p>
-        <p>Arbuste isolé sur gazon en plein terre ou sur dalles<input type="checkbox" name="Arbuste isolé sur gazon en plein terre ou sur dalles"></p>
-        <p>Arbuste isolé sur sol artificialisé<input type="checkbox" name="Arbuste isolé sur sol artificialisé"></p>
-        <p>Autre habitat<input type="checkbox" name="Autre habitat"></p>
+      <div class="content" data-name="environement8">
+        <p><span class="tabulation"><input type="checkbox" id="habitat71" name="Lande ou brousaille" class="habitat">Lande ou brousaille</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat72" name="Friche urbaine arbustive en plein terre ou sur dalles" class="habitat">Friche urbaine arbustive en plein terre ou sur dalles</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat73" name="Friche urbaine envahie par les espèces invasives en plein terre ou sur dalles" class="habitat">Friche urbaine envahie par les espèces invasives en plein terre ou sur dalles</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat74" name="Massif arbustif planté en plein terre ou sur dalles" class="habitat">Massif arbustif planté en plein terre ou sur dalles</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat75" name="Haie basse libre en plein terre ou sur dalles" class="habitat">Haie basse libre en plein terre ou sur dalles</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat76" name="Haie basse taillée en plein terre ou sur dalles" class="habitat">Haie basse taillée en plein terre ou sur dalles</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat77" name="Arbuste isolé sur herbacées hautes en plein terre ou sur dalles" class="habitat">Arbuste isolé sur herbacées hautes en plein terre ou sur dalles</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat78" name="Arbuste isolé sur gazon en plein terre ou sur dalles" class="habitat">Arbuste isolé sur gazon en plein terre ou sur dalles</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat79" name="Arbuste isolé sur sol artificialisé" class="habitat">Arbuste isolé sur sol artificialisé</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="habitat80" name="Autre habitat" class="habitat">Autre habitat</span></p>
       </div>
       <br>
-      <input type="checkbox" name="Elements invasifs">
+      <input type="checkbox" id="element_invasif" name="Elements invasifs" class="element_invasif">
       <button class="collapsible">Elements invasifs</button>
-      <div class="content">
-        <p>Ailante glanduleux<input type="checkbox" name="Ailante glanduleux"></p>
-        <p>Ambroisie à feuille d'armoise<input type="checkbox" name="Ambroisie à feuille d'armoise"></p>
-        <p>Arbre aux papillons<input type="checkbox" name="Arbre aux papillons"></p>
-        <p>Berce du caucase<input type="checkbox" name="Berce du caucase"></p>
-        <p>Herbes de la pampa<input type="checkbox" name="Herbes de la pampa"></p>
-        <p>Raisin d'amérique<input type="checkbox" name="Raisin d'amérique"></p>
-        <p>Renouées<input type="checkbox" name="Renouées"></p>
-        <p>Robinier faux-acacia<input type="checkbox" name="Robinier faux-acacia"></p>
-        <p>Autre éléments invasifs<input type="checkbox" name="Autre éléments invasifs"></p>
+      <div class="content" id="element_invasif">
+        <p><span class="tabulation"><input type="checkbox" id="Ailante glanduleux" class="element_invasif">Ailante glanduleux</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="Ambroisie à feuille d'armoise" class="element_invasif">Ambroisie à feuille d'armoise</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="Arbre aux papillons" class="element_invasif">Arbre aux papillons</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="Berce du caucase" class="element_invasif">Berce du caucase</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="Herbes de la pampa" class="element_invasif">Herbes de la pampa</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="Raisin d'amérique" class="element_invasif">Raisin d'amérique</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="Renouées" class="element_invasif">Renouées</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="Robinier faux-acacia" class="element_invasif">Robinier faux-acacia</span></p>
+        <p><span class="tabulation"><input type="checkbox" id="Autre éléments invasifs" class="element_invasif">Autre éléments invasifs</span></p>
       </div>
       <br>
       <script type="text/javascript">
@@ -211,14 +217,28 @@
       </script>
     </div>
   </div>
+</template>
 
-
-
-  <div id="Date" class="tabcontent">
-    <input type="date" value="2018-04-30" name="startDate"><input type="checkbox" name="startDate" ><br>
-    <input type="date" value="2018-04-30" name="endDate"><input type="checkbox" name="endDate" ><br>
+<template name="specieSelection">
+  <div id="Espèce" class="tabcontent">
+    <label></label><input type="checkbox" id="Insectes" class="espece">Insectes<br>
+    <label></label><input type="checkbox" id="Mollusques" class="espece">Mollusques<br>
+    <label></label><input type="checkbox" id="Mammifères" class="espece">Mammifères<br>
+    <label></label><input type="checkbox" id="Oiseaux" class="espece">Oiseaux<br>
+    <label></label><input type="checkbox" id="Poissons" class="espece">Poissons<br>
+    <label></label><input type="checkbox" id="Amphibiens" class="espece">Amphibiens<br>
+    <label></label><input type="checkbox" id="Reptiles" class="espece">Reptiles<br>
   </div>
+</template>
 
+<template name="dateSelection">
+  <div id="Date" class="tabcontent">
+    <input type="date" value="2018-04-30" name="startDate" id="date1"><input type="checkbox" name="startDate" class="date"><br>
+    <input type="date" value="2018-04-30" name="endDate" id="date2"><input type="checkbox" name="endDate" class="date"><br>
+  </div>
+</template>
+
+<template name="regionSelection">
   <div id="Région" class="tabcontent">
     <label>Auvergne-Rhône-Alpes</label><input type="checkbox" name="Auvergne-Rhône-Alpes"><br>
     <label>Bourgogne-Franche-Comté</label><input type="checkbox" name="Bourgogne-Franche-Comté"><br>
@@ -233,70 +253,5 @@
     <label>Occitanie</label><input type="checkbox" name="Occitanie"><br>
     <label>Pays de la Loire</label><input type="checkbox" name="Pays de la Loire"><br>
     <label>Provence-Alpes-Côte d'Azur</label><input type="checkbox" name="Provence-Alpes-Côte d'Azur"><br>
-  </div>
-</div>
-
-<div id="filter"> <!--Div pour les filtres-->
-
-</div>
-</body>
-
-<template name="mapLeafletVisual">
-  <div id='basicMap'></div>
-</template>
-
-<template name="environmentSelection">
-  <div id="Milieu" class="tabcontent">
-    <h3>Milieu</h3>
-
-    <label for="environment-1">
-      <input type="checkbox" name="Milieu aquatique et surface en eau"
-             id="environment-1" value="#28877B" class="environment" />Milieu aquatique et surface en
-      eau
-    </label>
-    <br/>
-    <label for="environment-2">
-      <input type="checkbox" name="Surfaces bâties végétalisées"
-             id="environment-2" value="#812887" class="environment" /> Surfaces bâties végétalisées
-    </label>
-    <br/>
-    <label for="environment-3">
-      <input type="checkbox" name="Surfaces entiérement artificialisées"
-             id="environment-3" value="#AE7741" class="environment" /> Surfaces entiérement
-      artificialisées
-    </label>
-    <br/>
-    <label for="environment-4">
-      <input type="checkbox"
-             name="Habitat sans végétation ou végetation clairsemée"
-             id="environment-4" value="#88A93B" class="environment" /> Habitat sans végétation ou
-      végetation
-      clairsemée
-    </label>
-    <br/>
-    <label for="environment-5">
-      <input type="checkbox" name="Terrains agricoles et horticoles"
-             id="environment-5" value="#136049" class="environment" /> Terrains agricoles et
-      horticoles
-    </label>
-    <br/>
-    <label for="environment-6">
-      <input type="checkbox" name="Terrains dominés par des herbacées"
-             id="environment-6" value="#C03000" class="environment" /> Terrains dominés par des
-      herbacées
-    </label>
-    <br/>
-    <label for="environment-7">
-      <input type="checkbox" name="Boisements, forets et autres terrains boisés"
-             id="environment-7" value="#84815B" class="environment" /> Boisement ,foret et
-      autre terrains boisés
-    </label>
-    <br/>
-    <label for="environment-8">
-      <input type="checkbox" name="Végétation arbustive" id="environment-8"
-             value="#8E3557"/> Végétation arbustive
-    </label>
-
-    <p>Formulaire de filtres pour le milieu.</p>
   </div>
 </template>

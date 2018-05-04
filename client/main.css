@@ -76,6 +76,10 @@
   font-size: 100%;
 }
 
+.tabulation {
+  margin-left: 20px;
+}
+
 .tab {
   overflow: hidden;
   border: 1px solid #ccc;

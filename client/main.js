@@ -17,12 +17,25 @@ Template.mapLeafletVisual.rendered = function () {
 };
 
 Template.biotopeSelection.events = {
+  'click .environment' : function (event) {
+    let name_item = $(event.target).attr('name'); // recuperation du nom de la
+    // checkbox
+    let id_item = $(event.target).attr('id');
+    data = $('div[data-name="' + name_item + '"] input');
+    for (let i = 0; i < data.length; i++){
+      if (document.getElementById(id_item).checked)
+        data[i].checked = true;
+      else
+        data[i].checked = false;
+    }
+  },
+
   'click input': function (event) {
     let name_item = $(event.target).attr('name'); // recuperation du nom de la
     // checkbox
     let id_item = $(event.target).attr('id');
     //let color = $(event.target).attr('value');
-
+    /*
     let class_item = $(event.target).attr('class');
     console.log( "name : " + name_item + "; id : " + id_item + "; classe : " + class_item);
     let data;
@@ -34,7 +47,9 @@ Template.biotopeSelection.events = {
         else
           data[i].checked = false;
       }
-    }
+    }*/
+
+    let selection = Session.get('selection') || "";
     /*
     for (let i = 1; i < 9; i++){
       let name = "environement" + i;
@@ -53,28 +68,6 @@ Template.biotopeSelection.events = {
       mapLeaflet.removeAllElement();
     mapLeaflet.updateMap();
     //mise a jour de la carte en fonction de la selection
-
-    let selection = "";
-    data = $('div[id="Date"] input[class="date"]');
-    for (let i = 0; i < data.length; i++){
-      if (data[i].checked === true){
-        switch (data[i].name){
-          case "startDate" :
-            selection += " and date_enr >= '" + document.getElementById("date1").value + "'";
-            break;
-          case "endDate" :
-            selection += " and date_enr <= '" + document.getElementById("date2").value + "'";
-            break;
-        }
-      }
-    }
-
-    data = $('div[id="Région"] input');
-    for (let i = 0; i < data.length; i++){
-      if (data[i].checked === true){
-        selection += " and region = $$" + data[i].name + "$$";
-      }
-    }
 
     console.log("selection : " + selection);
     data = $('div[id="Biotope"] input');
@@ -106,5 +99,104 @@ Template.biotopeSelection.events = {
       }
     }
     //mapLeaflet.updateMap();
+  },
+
+  'change input' : function (event) {
+    console.log(event);
+
+    let name_item = $(event.target).attr('name'); // recuperation du nom de la
+    // checkbox
+    let id_item = $(event.target).attr('id');
+    console.log("la balise " + id_item + " a changé");
   }
 };
+
+Template.dateSelection.events = {
+  'click .date': function(event) {
+    let selection = Session.get('selection') || "";
+    let name_item = $(event.target).attr('name'); // recuperation du nom de la
+    // checkbox
+    let id_item = $(event.target).attr('id');
+    if (document.getElementById(id_item).checked === true){
+      switch (name_item){
+        case "startDate" :
+          selection += " and date_enr >= '" + document.getElementById("date1").value + "'";
+          break;
+        case "endDate" :
+          selection += " and date_enr <= '" + document.getElementById("date2").value + "'";
+          break;
+      }
+    }
+    else {
+      switch (name_item){
+        case "startDate" :
+          selection = selection.replace(selection.substring(selection.search(" and date_enr >= "), selection.search(" and date_enr >= ") + 29), "");
+          break;
+        case "endDate" :
+          selection = selection.replace(selection.substring(selection.search(" and date_enr <= "), selection.search(" and date_enr <= ") + 29), "");
+          break;
+      }
+    }
+
+    console.log("selection= \"" + selection + "\"");
+    Session.set('selection', selection);
+
+  }
+};
+
+Template.regionSelection.events = {
+  'click input': function(event) {
+    let selection = Session.get('selection') || "";
+    let name_item = $(event.target).attr('name'); // recuperation du nom de la
+    // checkbox
+    let id_item = $(event.target).attr('id');
+    console.log("id : " + id_item + "; name = " + name_item);
+    if (document.getElementById(id_item).checked === true){
+      selection += " and region = $$" + name_item + "$$";
+    }
+    else {
+      selection = selection.replace(" and region = $$" + name_item + "$$", "");
+    }
+
+    console.log("selection= \"" + selection + "\"");
+    Session.set('selection', selection);
+
+  }
+};
+
+Template.specieSelection.events = {
+  'click input' : function (event) {
+    let name_item = $(event.target).attr('name'); // recuperation du nom de la
+    // checkbox
+    let id_item = $(event.target).attr('id');
+    console.log("id : " + id_item + "; name = " + name_item);
+    let cql = "";
+    if (document.getElementById(id_item).checked === true){
+      cql = "SELECT * FROM "
+    }
+    else {
+      selection = selection.replace(" and region = $$" + name_item + "$$", "");
+    }
+  }
+};
+
+Template.test1.events = {
+  'click a ': function() {
+
+    Meteor.call('execCQL', "SELECT * FROM sampledb.sarat ;", function (err, response) {
+      Session.set('yolo', response);
+    });
+
+    let res = Session.get('yolo');
+    console.log(res);
+  }
+};
+
+Template.test2.events = {
+  'click a ': function() {
+
+    let test = "bonjour je suis un gentil garcon";
+    console.log(test.replace(test.substring(test.search("suis"), test.search("suis") + 3), ""));
+  }
+};
+

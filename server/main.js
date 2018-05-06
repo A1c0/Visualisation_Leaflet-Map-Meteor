@@ -17,7 +17,6 @@ Meteor.startup(() => {
 
 Meteor.methods({
   foo(arg1) {
-    console.log("arg1 : " + arg1);
     return arg1;
   },
 

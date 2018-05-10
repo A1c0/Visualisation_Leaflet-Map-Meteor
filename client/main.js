@@ -8,150 +8,428 @@ import {MapLeaflet, MapElement} from '../myLib/MapLeaflet';
 
 import './main.html';
 //import {Session} from 'meteor/session';
+
 import {Meteor} from 'meteor/meteor';
 
-let mapLeaflet;
+var mapLeaflet;
+
+const getInfo = (response, row) => {
+  let info = "";
+  for (const j in response.rows[row]) {
+    if (j != 'id' && j != 'photo') {
+      //console.log(j);
+      //console.log(response.rows[row][j]);
+      if (j === 'heure_enr') {
+        info += j + ": " + response.rows[row][j].hour + ":" +
+          response.rows[row][j].minute + response.rows[row][j].second +
+          "\n";
+      }
+      if (j === 'date_enr') {
+        info += j + ": " + response.rows[row][j].date + "\n";
+      } else {
+        info += j + ": " + response.rows[row][j] + "\n";
+      }
+    }
+  }
+  return info;
+};
+
+const refreshSelection = function () {
+  let cqlTab = Session.get('cqlTab') || [];
+  let colorTab = Session.get('colorTab') || [];
+  let selection = Session.get('selection');
+  let i = 0;
+  mapLeaflet.removeAllElement();
+  cqlTab.forEach(function (cql) {
+    let requete = "" + cql + selection + " ALLOW FILTERING;";
+
+    Meteor.call('execCQL', requete, function (err, response) {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        for (const row in response.rows) {
+
+          let info = getInfo(response, row);
+          console.log(info);
+          mapLeaflet.addElement(
+            new MapElement(response.rows[row]['gps_lat'],
+              response.rows[row]['gps_long'], colorTab[i], info));
+        }
+        console.log(i);
+        i++;
+      }
+    });
+  });
+  const time = setInterval(() => {
+    if ((i === cqlTab.length)) {
+      clearInterval(time);
+      console.log(mapLeaflet.getArrayElement());
+      mapLeaflet.updateMap();
+      console.log("===========   REFRESH   ===========");
+    }
+  }, 10);
+};
 
 Template.mapLeafletVisual.rendered = function () {
   mapLeaflet = new MapLeaflet('basicMap');
 };
 
 Template.biotopeSelection.events = {
-  'click .environment' : function (event) {
-    let name_item = $(event.target).attr('name'); // recuperation du nom de la
-    // checkbox
-    let id_item = $(event.target).attr('id');
-    data = $('div[data-name="' + name_item + '"] input');
-    for (let i = 0; i < data.length; i++){
-      if (document.getElementById(id_item).checked)
-        data[i].checked = true;
-      else
-        data[i].checked = false;
-    }
-  },
-
-  'click input': function (event) {
-    let name_item = $(event.target).attr('name'); // recuperation du nom de la
-    // checkbox
-    let id_item = $(event.target).attr('id');
-    //let color = $(event.target).attr('value');
-    /*
-    let class_item = $(event.target).attr('class');
-    console.log( "name : " + name_item + "; id : " + id_item + "; classe : " + class_item);
-    let data;
-    if (class_item === "environment"){
-      data = $('div[data-name="' + name_item + '"] input');
-      for (let i = 0; i < data.length; i++){
-        if (document.getElementById(id_item).checked)
-          data[i].checked = true;
-        else
-          data[i].checked = false;
-      }
-    }*/
-
+  'click .environment': function (event) {
+    let cqlTab = Session.get('cqlTab') || [];
+    let colorTab = Session.get('colorTab') || [];
     let selection = Session.get('selection') || "";
-    /*
-    for (let i = 1; i < 9; i++){
-      let name = "environement" + i;
-      data = $('div[data-name="' + name + '"] input');
-      let change = true;
-      for (let j = 0; j < data.length; j++){
-        if (data[j].checked === false)
-          change = false;
-      }
-      if (change){
-        document.getElementById(name).checked = false;
-        console.log("ccouchgdrf");
-      }
-    }*/
 
-      mapLeaflet.removeAllElement();
-    mapLeaflet.updateMap();
-    //mise a jour de la carte en fonction de la selection
+    let name_item = $(event.target).attr('name'); // recuperation du nom de la
+    // checkbox
+    let id_item = $(event.target).attr('id');
 
-    console.log("selection : " + selection);
-    data = $('div[id="Biotope"] input');
-    for (let i = 0; i < data.length; i++){
-      let cql = "";
-      if (document.getElementById(data[i].id).checked === true){
-        switch (data[i].className){
-          /*case "environment" :
-            cql = "SELECT * from databio.habitat where milieu = $$" + data[i].name + "$$;";
-            //console.log(cql);
-            break;*/
-          case "habitat" :
-            cql = "SELECT * from databio.habitat where typeHab = $$" + data[i].name + "$$" + selection + ";";
-            //console.log(cql);
-            break;
+    let data = $('div[data-name="' + name_item + '"] input');
+    for (let i = 0; i < data.length; i++) {
+
+      if (document.getElementById(id_item).checked) {
+        data[i].checked = true;
+        if (data[i].className === 'habitat') {
+          cqlTab.push("SELECT * from databio.habitat where typeHab = $$" +
+            data[i].name + "$$");
+          colorTab.push(data[i].value);
+          Meteor.call(
+            'execCQL', "SELECT * from databio.habitat where typeHab = $$" +
+            data[i].name + "$$" + selection + " ALLOW FILTERING;",
+            (err, response) => {
+              if (err) {
+                console.log(err);
+              }
+              else {
+                for (const row in response.rows) {
+                  let info = getInfo(response, row);
+                  //console.log(info + "\n");
+
+                  mapLeaflet.addElement(
+                    new MapElement(response.rows[row]['gps_lat'],
+                      response.rows[row]['gps_long'], data[i].value, info));
+                  mapLeaflet.updateMap();
+                }
+              }
+            });
+        }
+        else {
+          cqlTab.push("SELECT * from databio.element_remarquable where type = $$" +
+            data[i].name + "$$");
+          colorTab.push(data[i].value);
+          Meteor.call(
+            'execCQL', "SELECT * from databio.element_remarquable where type = $$" +
+            data[i].name + "$$" + selection + " ALLOW FILTERING;",
+            (err, response) => {
+              if (err) {
+                console.log(err);
+              }
+              else {
+                for (const row in response.rows) {
+                  let info = getInfo(response, row);
+                  //console.log(info + "\n");
+
+                  mapLeaflet.addElement(
+                    new MapElement(response.rows[row]['gps_lat'],
+                      response.rows[row]['gps_long'], data[i].value, info));
+                  mapLeaflet.updateMap();
+                }
+
+              }
+            });
         }
       }
-      if (cql !== ""){
-        Meteor.call('execCQL', cql, function (err, response) {
-          if (!err){
-            //console.log(response);
-            response.rows.forEach(function (row) {
-              let info = 'milieu : ' + row['milieu'];
-              mapLeaflet.addElement(new MapElement(row['gps_lat'], row['gps_long'], '#2b69ac', info));
+      else {
+        data[i].checked = false;
+        if (data[i].className === 'habitat') {
+          colorTab.splice(
+            cqlTab.indexOf("SELECT * from databio.habitat where typeHab = $$" +
+              data[i].name + "$$"), 1);
+          cqlTab.splice(
+            cqlTab.indexOf("SELECT * from databio.habitat where typeHab = $$" +
+              data[i].name + "$$"), 1);
+          Meteor.call(
+            'execCQL', "SELECT * from databio.habitat where typeHab = $$" +
+            data[i].name + "$$" + selection + " ALLOW FILTERING;",
+            (err, response) => {
+              if (err) {
+                console.log(err);
+              }
+              else {
+                for (const row in response.rows) {
+                  let info = getInfo(response, row);
+                  //console.log(info + "\n");
+                  cqlTab.push("SELECT * from databio.habitat where typeHab = $$" +
+                    data[i].name + "$$");
+
+                  mapLeaflet.removeElement(
+                    new MapElement(response.rows[row]['gps_lat'],
+                      response.rows[row]['gps_long'], data[i].value, info));
+                  mapLeaflet.updateMap();
+                }
+              }
             });
-            mapLeaflet.updateMap();
-          }
-        });
+        }
+        else {
+          colorTab.splice(
+            cqlTab.indexOf("SELECT * from databio.element_remarquable where type = $$" +
+              data[i].name + "$$"), 1);
+          cqlTab.splice(
+            cqlTab.indexOf("SELECT * from databio.element_remarquable where type = $$" +
+              data[i].name + "$$"), 1);
+          Meteor.call(
+            'execCQL', "SELECT * from databio.element_remarquable where type = $$" +
+            data[i].name + "$$" + selection + " ALLOW FILTERING;",
+            (err, response) => {
+              if (err) {
+                console.log(err);
+              }
+              else {
+                for (const row in response.rows) {
+                  let info = getInfo(response, row);
+                  mapLeaflet.removeElement(
+                    new MapElement(response.rows[row]['gps_lat'],
+                      response.rows[row]['gps_long'], data[i].value, info));
+                  mapLeaflet.updateMap();
+                }
+              }
+            });
+        }
       }
     }
-    //mapLeaflet.updateMap();
+
+    console.log(cqlTab);
+    console.log(colorTab);
+    console.log("selection : " + selection);
+    Session.set('cqlTab', cqlTab);
+    Session.set('colorTab', colorTab);
+    Session.set('selection', selection);
   },
 
-  'change input' : function (event) {
-    console.log(event);
+  'click .habitat': function (event) {
+    let cqlTab = Session.get('cqlTab') || [];
+    let colorTab = Session.get('colorTab') || [];
+    let selection = Session.get('selection') || "";
 
     let name_item = $(event.target).attr('name'); // recuperation du nom de la
     // checkbox
     let id_item = $(event.target).attr('id');
-    console.log("la balise " + id_item + " a changé");
-  }
+    let color = $(event.target).attr('value');
+    if (document.getElementById(id_item).checked) {
+      cqlTab.push("SELECT * from databio.habitat where typeHab = $$" +
+        name_item + "$$");
+      colorTab.push(color);
+    }
+    else {
+      colorTab.splice(
+        cqlTab.indexOf("SELECT * from databio.habitat where typeHab = $$" +
+          name_item + "$$"), 1);
+      cqlTab.splice(
+        cqlTab.indexOf("SELECT * from databio.habitat where typeHab = $$" +
+          name_item + "$$"), 1);
+    }
+
+    Meteor.call('execCQL', "SELECT * from databio.habitat where typeHab = $$" +
+      name_item + "$$" + selection + " ALLOW FILTERING;", (err, response) => {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        for (const row in response.rows) {
+          let info = getInfo(response, row);
+          //console.log(info + "\n");
+          if (document.getElementById(id_item).checked) {
+            mapLeaflet.addElement(
+              new MapElement(response.rows[row]['gps_lat'],
+                response.rows[row]['gps_long'], color, info));
+            mapLeaflet.updateMap();
+          }
+          else {
+
+            for (const row in response.rows) {
+              mapLeaflet.removeElement(
+                new MapElement(response.rows[row]['gps_lat'],
+                  response.rows[row]['gps_long'], color, info));
+              mapLeaflet.updateMap();
+            }
+          }
+        }
+
+      }
+    });
+    console.log(cqlTab);
+    console.log(colorTab);
+    console.log("selection : " + selection);
+    Session.set('cqlTab', cqlTab);
+    Session.set('colorTab', colorTab);
+    Session.set('selection', selection);
+  },
+
+  'click .element_remarquable': function (event) {
+    let cqlTab = Session.get('cqlTab') || [];
+    let colorTab = Session.get('colorTab') || [];
+    let selection = Session.get('selection') || "";
+
+    let name_item = $(event.target).attr('name'); // recuperation du nom de la
+    // checkbox
+    let id_item = $(event.target).attr('id');
+    let color = $(event.target).attr('value');
+    if (document.getElementById(id_item).checked) {
+      cqlTab.push("SELECT * from databio.element_remarquable where type = $$" +
+        name_item + "$$");
+      colorTab.push(color);
+    }
+    else {
+      colorTab.splice(
+        cqlTab.indexOf("SELECT * from databio.element_remarquable where type = $$" +
+          name_item + "$$"), 1);
+      cqlTab.splice(
+        cqlTab.indexOf("SELECT * from databio.element_remarquable where type = $$" +
+          name_item + "$$"), 1);
+    }
+    Meteor.call(
+      'execCQL', "SELECT * from databio.element_remarquable where type = $$" +
+      name_item + "$$" + selection + " ALLOW FILTERING;", (err, response) => {
+        if (err) {
+          console.log(err);
+        }
+        else {
+          for (const row in response.rows) {
+            let info = getInfo(response, row);
+            console.log(info + "\n");
+            if (document.getElementById(id_item).checked) {
+              mapLeaflet.addElement(
+                new MapElement(response.rows[row]['gps_lat'],
+                  response.rows[row]['gps_long'], color, info));
+              mapLeaflet.updateMap();
+            }
+            else {
+              for (const row in response.rows) {
+                mapLeaflet.removeElement(
+                  new MapElement(response.rows[row]['gps_lat'],
+                    response.rows[row]['gps_long'], color, info));
+                mapLeaflet.updateMap();
+              }
+            }
+          }
+
+        }
+      });
+    console.log(cqlTab);
+    console.log(colorTab);
+    console.log("selection : " + selection);
+    Session.set('cqlTab', cqlTab);
+    Session.set('colorTab', colorTab);
+    Session.set('selection', selection);
+  },
+
+  'click .element_invasif': function (event) {
+    let cqlTab = Session.get('cqlTab') || [];
+    let colorTab = Session.get('colorTab') || [];
+    let selection = Session.get('selection') || "";
+
+    let name_item = $(event.target).attr('name'); // recuperation du nom de la
+    // checkbox
+    let id_item = $(event.target).attr('id');
+    let color = $(event.target).attr('value');
+    if (document.getElementById(id_item).checked) {
+      cqlTab.push("SELECT * from databio.element_invasif where type = $$" +
+        name_item + "$$");
+      colorTab.push(color);
+    }
+    else {
+      colorTab.splice(
+        cqlTab.indexOf("SELECT * from databio.element_invasif where type = $$" +
+          name_item + "$$"), 1);
+      cqlTab.splice(
+        cqlTab.indexOf("SELECT * from databio.element_invasif where type = $$" +
+          name_item + "$$"), 1);
+    }
+    Meteor.call(
+      'execCQL', "SELECT * from databio.element_invasif where type = $$" +
+      name_item + "$$" + selection + " ALLOW FILTERING;", (err, response) => {
+        if (err) {
+          console.log(err);
+        }
+        else {
+          for (const row in response.rows) {
+            let info = getInfo(response, row);
+            console.log(info + "\n");
+            if (document.getElementById(id_item).checked) {
+              mapLeaflet.addElement(
+                new MapElement(response.rows[row]['gps_lat'],
+                  response.rows[row]['gps_long'], color, info));
+              mapLeaflet.updateMap();
+            }
+            else {
+              for (const row in response.rows) {
+                mapLeaflet.removeElement(
+                  new MapElement(response.rows[row]['gps_lat'],
+                    response.rows[row]['gps_long'], color, info));
+                mapLeaflet.updateMap();
+              }
+            }
+          }
+
+        }
+      });
+    console.log(cqlTab);
+    console.log(colorTab);
+    console.log("selection : " + selection);
+    Session.set('cqlTab', cqlTab);
+    Session.set('colorTab', colorTab);
+    Session.set('selection', selection);
+  },
 };
 
 Template.dateSelection.events = {
-  'click .date': function(event) {
+  'click .date': function (event) {
     let selection = Session.get('selection') || "";
     let name_item = $(event.target).attr('name'); // recuperation du nom de la
     // checkbox
     let id_item = $(event.target).attr('id');
-    if (document.getElementById(id_item).checked === true){
-      switch (name_item){
+    if (document.getElementById(id_item).checked === true) {
+      switch (name_item) {
         case "startDate" :
-          selection += " and date_enr >= '" + document.getElementById("date1").value + "'";
+          selection +=
+            " and date_enr >= '" + document.getElementById("date1").value + "'";
           break;
         case "endDate" :
-          selection += " and date_enr <= '" + document.getElementById("date2").value + "'";
+          selection +=
+            " and date_enr <= '" + document.getElementById("date2").value + "'";
           break;
       }
     }
     else {
-      switch (name_item){
+      switch (name_item) {
         case "startDate" :
-          selection = selection.replace(selection.substring(selection.search(" and date_enr >= "), selection.search(" and date_enr >= ") + 29), "");
+          selection = selection.replace(selection.substring(
+            selection.search(" and date_enr >= "), selection.search(
+            " and date_enr >= ") + 29), "");
           break;
         case "endDate" :
-          selection = selection.replace(selection.substring(selection.search(" and date_enr <= "), selection.search(" and date_enr <= ") + 29), "");
+          selection = selection.replace(selection.substring(
+            selection.search(" and date_enr <= "), selection.search(
+            " and date_enr <= ") + 29), "");
           break;
       }
     }
 
     console.log("selection= \"" + selection + "\"");
     Session.set('selection', selection);
-
+    refreshSelection();
   }
 };
 
 Template.regionSelection.events = {
-  'click input': function(event) {
+  'click input': function (event) {
     let selection = Session.get('selection') || "";
     let name_item = $(event.target).attr('name'); // recuperation du nom de la
     // checkbox
     let id_item = $(event.target).attr('id');
     console.log("id : " + id_item + "; name = " + name_item);
-    if (document.getElementById(id_item).checked === true){
+    if (document.getElementById(id_item).checked === true) {
       selection += " and region = $$" + name_item + "$$";
     }
     else {
@@ -160,43 +438,184 @@ Template.regionSelection.events = {
 
     console.log("selection= \"" + selection + "\"");
     Session.set('selection', selection);
-
+    refreshSelection();
   }
 };
 
 Template.specieSelection.events = {
-  'click input' : function (event) {
+  'click input': function (event) {
+    let cqlTab = Session.get('cqlTab') || [];
+    let colorTab = Session.get('colorTab') || [];
+    let selection = Session.get('selection') || "";
+
     let name_item = $(event.target).attr('name'); // recuperation du nom de la
     // checkbox
     let id_item = $(event.target).attr('id');
-    console.log("id : " + id_item + "; name = " + name_item);
-    let cql = "";
-    if (document.getElementById(id_item).checked === true){
-      cql = "SELECT * FROM "
+    let color = $(event.target).attr('value');
+    if (document.getElementById(id_item).checked) {
+      cqlTab.push("SELECT * from databio.espece where nom_esp = $$" +
+        name_item + "$$");
+      colorTab.push(color);
     }
     else {
-      selection = selection.replace(" and region = $$" + name_item + "$$", "");
+      colorTab.splice(
+        cqlTab.indexOf("SELECT * from databio.espece where nom_esp = $$" +
+          name_item + "$$"), 1);
+      cqlTab.splice(
+        cqlTab.indexOf("SELECT * from databio.espece where nom_esp = $$" +
+          name_item + "$$"), 1);
     }
-  }
+    Meteor.call(
+      'execCQL', "SELECT * from databio.espece where nom_esp = $$" +
+      name_item + "$$" + selection + " ALLOW FILTERING;", (err, response) => {
+        if (err) {
+          console.log(err);
+        }
+        else {
+          for (const row in response.rows) {
+            let info = getInfo(response, row);
+            console.log(info + "\n");
+            if (document.getElementById(id_item).checked) {
+              mapLeaflet.addElement(
+                new MapElement(response.rows[row]['gps_lat'],
+                  response.rows[row]['gps_long'], color, info));
+              mapLeaflet.updateMap();
+            }
+            else {
+              for (const row in response.rows) {
+                mapLeaflet.removeElement(
+                  new MapElement(response.rows[row]['gps_lat'],
+                    response.rows[row]['gps_long'], color, info));
+                mapLeaflet.updateMap();
+              }
+            }
+          }
+
+        }
+      });
+    console.log(cqlTab);
+    console.log(colorTab);
+    console.log("selection : " + selection);
+    Session.set('cqlTab', cqlTab);
+    Session.set('colorTab', colorTab);
+    Session.set('selection', selection);
+  },
 };
 
-Template.test1.events = {
-  'click a ': function() {
+Template.exportData.events = {
+  'click button': function () {
 
-    Meteor.call('execCQL', "SELECT * FROM sampledb.sarat ;", function (err, response) {
-      Session.set('yolo', response);
+    let showquery_allRemarcable = "SELECT * FROM databio.element_remarquable;";
+
+    let showquery_allHabitat = "SELECT * FROM databio.habitat;";
+
+    let showquery_allEspece = "SELECT * FROM databio.espece;";
+
+    let showquery_allInvasif = "SELECT * FROM databio.element_invasif;";
+
+    Meteor.call('execCQL', showquery_allRemarcable, function (err, response) {
+
+      let csv = 'nommilieu,typehab,date_enr,gps_lat,gps_lat_lam,gps_long,gps_long_lam,heure_enr,type\n';
+
+      /*let date = new Date();
+      console.log(date);
+      let options = {year: 'numeric', month: 'short', day: '2-digit'};
+      let resultDate = new Intl.DateTimeFormat('en-GB', options).format(date);*/
+
+      for (let i = 0; i < response.rows.length; i++) {
+
+        csv += "\"" + response.rows[i]['nommilieu'] + "\","
+          + response.rows[i]['typehab'] + ","
+          + response.rows[i]['date_enr'].day + "-" +
+          response.rows[i]['date_enr'].month + "-" +
+          response.rows[i]['date_enr'].year + ","
+          + response.rows[i]['gps_lat'] + ","
+          + response.rows[i]['gps_lat_lam'] + ","
+          + response.rows[i]['gps_long'] + ","
+          + response.rows[i]['gps_long_lam'] + ","
+          + response.rows[i]['heure_enr'].hour + ":" +
+          response.rows[i]['heure_enr'].minute + ":" +
+          response.rows[i]['heure_enr'].second + ","
+          + response.rows[i]['type'] + "\n";
+      }
+
+      let hiddenElement = document.createElement('a');
+      hiddenElement.href =
+        'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+      hiddenElement.target = '_blank';
+      hiddenElement.download = 'Element_remarquable.csv';
+      hiddenElement.click();
+
     });
 
-    let res = Session.get('yolo');
-    console.log(res);
+    Meteor.call('execCQL', showquery_allHabitat, function (err, response) {
+
+      let csv = 'gps_lat,gps_lat_lam,gps_long,gps_long_lam,milieu,typehab\n';
+
+      for (let i = 0; i < response.rows.length; i++) {
+
+        csv += response.rows[i]['gps_lat'] + ","
+          + response.rows[i]['gps_lat_lam'] + ","
+          + response.rows[i]['gps_long'] + ","
+          + response.rows[i]['gps_long_lam'] + ","
+          + "\"" + response.rows[i]['milieu'] + "\","
+          + response.rows[i]['typehab'] + "\n";
+
+      }
+
+      let hiddenElement = document.createElement('a');
+      hiddenElement.href =
+        'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+      hiddenElement.target = '_blank';
+      hiddenElement.download = 'Habitat.csv';
+      hiddenElement.click();
+
+    });
+
+    Meteor.call('execCQL', showquery_allEspece, function (err, response) {
+
+      let csv = 'gps_lat,gps_lat_lam,gps_long,gps_long_lam,nom_esp\n';
+
+      for (let i = 0; i < response.rows.length; i++) {
+
+        csv += response.rows[i]['gps_lat'] + ","
+          + response.rows[i]['gps_lat_lam'] + ","
+          + response.rows[i]['gps_long'] + ","
+          + response.rows[i]['gps_long_lam'] + ","
+          + "\"" + response.rows[i]['nom_esp'] + "\"," + "\n";
+
+      }
+
+      let hiddenElement = document.createElement('a');
+      hiddenElement.href =
+        'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+      hiddenElement.target = '_blank';
+      hiddenElement.download = 'Espece.csv';
+      hiddenElement.click();
+
+    });
+
+    Meteor.call('execCQL', showquery_allInvasif, function (err, response) {
+
+      let csv = 'gps_lat,gps_lat_lam,gps_long,gps_long_lam,type\n';
+
+      for (let i = 0; i < response.rows.length; i++) {
+
+        csv += response.rows[i]['gps_lat'] + ","
+          + response.rows[i]['gps_lat_lam'] + ","
+          + response.rows[i]['gps_long'] + ","
+          + response.rows[i]['gps_long_lam'] + ","
+          + "\"" + response.rows[i]['type'] + "\"," + "\n";
+
+      }
+
+      let hiddenElement = document.createElement('a');
+      hiddenElement.href =
+        'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+      hiddenElement.target = '_blank';
+      hiddenElement.download = 'Element_invasif.csv';
+      hiddenElement.click();
+
+    });
   }
 };
-
-Template.test2.events = {
-  'click a ': function() {
-
-    let test = "bonjour je suis un gentil garcon";
-    console.log(test.replace(test.substring(test.search("suis"), test.search("suis") + 3), ""));
-  }
-};
-

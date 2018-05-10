@@ -20,7 +20,7 @@ Meteor.methods({
     return arg1;
   },
 
-  execCQL(queryCQL) {
+  execCQL: function(queryCQL) {
     console.log("Request : " + queryCQL);
     return cassandraExecSync(queryCQL);
   }

@@ -44,7 +44,6 @@
     <button class="tablinks" onclick="openTab(event, 'Espèce')">Espèce</button>
     <button class="tablinks" onclick="openTab(event, 'Date')">Date</button>
     <button class="tablinks" onclick="openTab(event, 'Région')">Région</button>
-    <button class="tablinks" onclick="openTab(event, 'Importation')">Importation de données</button>
     <button class="tablinks" onclick="openTab(event, 'Exportation')">Exportation de données</button>
   </div>
 
@@ -53,7 +52,6 @@
   {{> specieSelection}}
   {{> dateSelection}}
   {{> regionSelection}}
-  {{> importData}}
   {{> exportData}}
 </div>
 
@@ -316,7 +314,7 @@
   </div>
 </template>
 
-
+<!--
 <template name="importData">
   <div id="Importation" class="tabcontent">
     <h3>Importez des données depuis un fichier provenant de l'application.</h3>
@@ -325,11 +323,15 @@
     <button id="import">Importer</button>
   </div>
 </template>
+-->
 
 <template name="exportData">
   <div id="Exportation" class="tabcontent">
     <h3>Exporter l'ensemble des données selectionnées au format .csv</h3>
-    <button id="import">Exporter</button>
+    <button id="exportFull" class="export">Exporter</button>
+    <br>
+    <h3>Exporter l'ensemble des données de session au format .csv</h3>
+    <button id="exportSession" class="export">Exporter</button>
   </div>
 </template>
 

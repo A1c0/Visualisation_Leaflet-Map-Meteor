@@ -503,7 +503,9 @@ Template.specieSelection.events = {
 };
 
 Template.exportData.events = {
-  'click button': function () {
+  'click #exportFull': function () {
+
+    console.log("Un petit test");
 
     let showquery_allRemarcable = "SELECT * FROM databio.element_remarquable;";
 
@@ -524,7 +526,7 @@ Template.exportData.events = {
 
       for (let i = 0; i < response.rows.length; i++) {
 
-        csv += "\"" + response.rows[i]['nommilieu'] + "\","
+        csv += "\"" + response.rows[i]['nomMilieu'] + "\","
           + response.rows[i]['typehab'] + ","
           + response.rows[i]['date_enr'].day + "-" +
           response.rows[i]['date_enr'].month + "-" +
@@ -617,5 +619,169 @@ Template.exportData.events = {
       hiddenElement.click();
 
     });
+  },
+
+  'click #exportSession': function () {
+
+    let cqlTab = Session.get('cqlTab') || [];
+    let selection = Session.get('selection') || "";
+    let csvHabitat = 'milieu, typeHab, GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region\n';
+    let csvElemRemarquable = 'nomMilieu, typeHab, type, GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region\n';
+    let csvElemInvasif = 'type, GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region\n';
+    let csvEspece = 'nom_esp, GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region\n';
+    let cqlCounter = 0;
+    Session.set('rows', "nothing");
+    console.log("cqlTab.length: " + cqlTab.length);
+    for (let i = 0; i < cqlTab.length; i++) {
+      if (cqlTab[i].search("databio.habitat") > 0) {
+        console.log("databio.habitat");
+        Meteor.call('execCQL', cqlTab[i] + selection + " ALLOW FILTERING;",
+          function (err, result) {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log(result);
+              for (const row in result.rows) {
+                csvHabitat += "\""
+                  + result.rows[row]['milieu'] + "\",\""
+                  + result.rows[row]['typehab'] + "\","
+                  + result.rows[row]['gps_lat'] + ","
+                  + result.rows[row]['gps_long'] + ","
+                  + result.rows[row]['gps_lat_lam'] + ","
+                  + result.rows[row]['gps_long_lam'] + ","
+                  + result.rows[row]['date_enr'].day + "-" +
+                  result.rows[row]['date_enr'].month + "-" +
+                  result.rows[row]['date_enr'].year + ","
+                  + result.rows[row]['heure_enr'].hour + ":" +
+                  result.rows[row]['heure_enr'].minute + ":" +
+                  result.rows[row]['heure_enr'].second + ",\""
+                  + result.rows[row]['region'] + "\"\n";
+              }
+              cqlCounter++;
+            }
+          });
+      }
+      if (cqlTab[i].search("databio.element_remarquable") > 0) {
+        console.log("databio.element_remarquable");
+        Meteor.call('execCQL', cqlTab[i] + selection + " ALLOW FILTERING;",
+          function (err, result) {
+            if (err) {
+              console.log(err);
+            } else {
+              for (const row in result.rows) {
+                csvElemRemarquable += "\""
+                  + result.rows[row]['nomMilieu'] + "\",\""
+                  + result.rows[row]['typeHab'] + "\",\""
+                  + result.rows[row]['type'] + "\","
+                  + result.rows[row]['gps_lat'] + ","
+                  + result.rows[row]['gps_long'] + ","
+                  + result.rows[row]['gps_lat_lam'] + ","
+                  + result.rows[row]['gps_long_lam'] + ","
+                  + result.rows[row]['date_enr'].day + "-" +
+                  result.rows[row]['date_enr'].month + "-" +
+                  result.rows[row]['date_enr'].year + ","
+                  + result.rows[row]['heure_enr'].hour + ":" +
+                  result.rows[row]['heure_enr'].minute + ":" +
+                  result.rows[row]['heure_enr'].second + ",\""
+                  + result.rows[row]['region'] + "\"\n";
+              }
+              cqlCounter++;
+            }
+          });
+
+      }
+      if (cqlTab[i].search("databio.element_invasif") > 0) {
+        console.log("databio.element_invasif");
+        Meteor.call('execCQL', cqlTab[i] + selection + " ALLOW FILTERING;",
+          (err, result) => {
+            if (err) {
+              console.log(err);
+            } else {
+              for (const row in result.rows) {
+                csvElemInvasif += "\""
+                  + result.rows[row]['type'] + "\","
+                  + result.rows[row]['gps_lat'] + ","
+                  + result.rows[row]['gps_long'] + ","
+                  + result.rows[row]['gps_lat_lam'] + ","
+                  + result.rows[row]['gps_long_lam'] + ","
+                  + result.rows[row]['date_enr'].day + "-" +
+                  result.rows[row]['date_enr'].month + "-" +
+                  result.rows[row]['date_enr'].year + ","
+                  + result.rows[row]['heure_enr'].hour + ":" +
+                  result.rows[row]['heure_enr'].minute + ":" +
+                  result.rows[row]['heure_enr'].second + ",\""
+                  + result.rows[row]['region'] + "\"\n";
+              }
+              cqlCounter++;
+            }
+          });
+      }
+      if (cqlTab[i].search("databio.espece") > 0) {
+        console.log("databio.espece");
+        Meteor.call('execCQL', cqlTab[i] + selection + " ALLOW FILTERING;",
+          (err, result) => {
+            if (err) {
+              console.log(err);
+            } else {
+              for (const row in result.rows) {
+                csvEspece += "\""
+                  + result.rows[row]['nom_esp'] + "\","
+                  + result.rows[row]['gps_lat'] + ","
+                  + result.rows[row]['gps_long'] + ","
+                  + result.rows[row]['gps_lat_lam'] + ","
+                  + result.rows[row]['gps_long_lam'] + ","
+                  + result.rows[row]['date_enr'].day + "-" +
+                  result.rows[row]['date_enr'].month + "-" +
+                  result.rows[row]['date_enr'].year + ","
+                  + result.rows[row]['heure_enr'].hour + ":" +
+                  result.rows[row]['heure_enr'].minute + ":" +
+                  result.rows[row]['heure_enr'].second + ",\""
+                  + result.rows[row]['region'] + "\"\n";
+              }
+              cqlCounter++;
+            }
+          });
+      }
+      console.log("i: " + i);
+    }
+    const time = setInterval(() => {
+      if (cqlCounter === cqlTab.length) {
+        clearInterval(time);
+        console.log("traitemeent final");
+        console.log(csvHabitat);
+        console.log(csvElemInvasif);
+        console.log(csvElemRemarquable);
+        console.log(csvEspece);
+        let hiddenElementHabitat = document.createElement('a');
+        hiddenElementHabitat.href =
+          'data:text/csv;charset=utf-8,' + encodeURIComponent(csvHabitat);
+        hiddenElementHabitat.target = '_blank';
+        hiddenElementHabitat.download = 'Habitat_session.csv';
+        hiddenElementHabitat.click();
+
+        let hiddenElementElemRemarquable = document.createElement('a');
+        hiddenElementElemRemarquable.href =
+          'data:text/csv;charset=utf-8,' +
+          encodeURIComponent(csvElemRemarquable);
+        hiddenElementElemRemarquable.target = '_blank';
+        hiddenElementElemRemarquable.download =
+          'Element_remarquable_session.csv';
+        hiddenElementElemRemarquable.click();
+
+        let hiddenElementElemInvasif = document.createElement('a');
+        hiddenElementElemInvasif.href =
+          'data:text/csv;charset=utf-8,' + encodeURIComponent(csvElemInvasif);
+        hiddenElementElemInvasif.target = '_blank';
+        hiddenElementElemInvasif.download = 'Element_invasif_session.csv';
+        hiddenElementElemInvasif.click();
+
+        let hiddenElementEspece = document.createElement('a');
+        hiddenElementEspece.href =
+          'data:text/csv;charset=utf-8,' + encodeURIComponent(csvEspece);
+        hiddenElementEspece.target = '_blank';
+        hiddenElementEspece.download = 'Espece_session.csv';
+        hiddenElementEspece.click();
+      }
+    }, 10);
   }
 };

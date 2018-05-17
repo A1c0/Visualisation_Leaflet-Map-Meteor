@@ -77,7 +77,7 @@ const LMap = function (div) {
   this.map.addLayer(this.zones);
 
   this.addCircle = function (element) {
-    var marker = L.circle([element.posX, element.posY], 5, {
+    var marker = L.circle([element.posX, element.posY], 10, {
       'stroke': false,
       'fill': true,
       'fillColor': element.color,

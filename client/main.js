@@ -17,17 +17,14 @@ const getInfo = (response, row) => {
   let info = "";
   for (const j in response.rows[row]) {
     if (j != 'id' && j != 'photo') {
-      //console.log(j);
-      //console.log(response.rows[row][j]);
       if (j === 'heure_enr') {
-        info += j + ": " + response.rows[row][j].hour + ":" +
-          response.rows[row][j].minute + response.rows[row][j].second +
-          "\n";
-      }
-      if (j === 'date_enr') {
-        info += j + ": " + response.rows[row][j].date + "\n";
+        info += "<p><b>" +  j + ": </b>" + response.rows[row][j].hour + ":" +
+          response.rows[row][j].minute + ':' + response.rows[row][j].second +
+          "\n" + "</p>";
+      } else if (j === 'date_enr') {
+        info += "<p><b>" + j + ": </b>" + response.rows[row][j].date + "</p>";
       } else {
-        info += j + ": " + response.rows[row][j] + "\n";
+        info += "<p><b>" + j + ": </b>" + response.rows[row][j] + "</p>";
       }
     }
   }
@@ -630,11 +627,9 @@ Template.exportData.events = {
     let csvElemInvasif = 'type, GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region\n';
     let csvEspece = 'nom_esp, GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region\n';
     let cqlCounter = 0;
-    Session.set('rows', "nothing");
     console.log("cqlTab.length: " + cqlTab.length);
     for (let i = 0; i < cqlTab.length; i++) {
       if (cqlTab[i].search("databio.habitat") > 0) {
-        console.log("databio.habitat");
         Meteor.call('execCQL', cqlTab[i] + selection + " ALLOW FILTERING;",
           function (err, result) {
             if (err) {
@@ -662,7 +657,6 @@ Template.exportData.events = {
           });
       }
       if (cqlTab[i].search("databio.element_remarquable") > 0) {
-        console.log("databio.element_remarquable");
         Meteor.call('execCQL', cqlTab[i] + selection + " ALLOW FILTERING;",
           function (err, result) {
             if (err) {
@@ -691,7 +685,6 @@ Template.exportData.events = {
 
       }
       if (cqlTab[i].search("databio.element_invasif") > 0) {
-        console.log("databio.element_invasif");
         Meteor.call('execCQL', cqlTab[i] + selection + " ALLOW FILTERING;",
           (err, result) => {
             if (err) {
@@ -717,7 +710,6 @@ Template.exportData.events = {
           });
       }
       if (cqlTab[i].search("databio.espece") > 0) {
-        console.log("databio.espece");
         Meteor.call('execCQL', cqlTab[i] + selection + " ALLOW FILTERING;",
           (err, result) => {
             if (err) {
@@ -742,16 +734,10 @@ Template.exportData.events = {
             }
           });
       }
-      console.log("i: " + i);
     }
     const time = setInterval(() => {
       if (cqlCounter === cqlTab.length) {
         clearInterval(time);
-        console.log("traitemeent final");
-        console.log(csvHabitat);
-        console.log(csvElemInvasif);
-        console.log(csvElemRemarquable);
-        console.log(csvEspece);
         let hiddenElementHabitat = document.createElement('a');
         hiddenElementHabitat.href =
           'data:text/csv;charset=utf-8,' + encodeURIComponent(csvHabitat);
@@ -782,6 +768,12 @@ Template.exportData.events = {
         hiddenElementEspece.download = 'Espece_session.csv';
         hiddenElementEspece.click();
       }
-    }, 10);
+    }, 1);
+  }
+};
+
+Template.testo.events = {
+  'click a' : function () {
+
   }
 };

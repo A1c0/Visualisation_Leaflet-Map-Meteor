@@ -5,7 +5,7 @@
   left: 0px;
   top: 0px;
   height: 90%;
-  width: 60%;
+  width: 60.5%;
   background-color: rgba(255,0,0,0);
   overflow: hidden;
 }
@@ -55,8 +55,8 @@
   bottom: 0%;
   left: 0%;
   position: absolute;
-  height: 10%;
-  width: 60%;
+  height: 9%;
+  width: 60.5%;
   background:
       linear-gradient(135deg, #708090 22px, #d9ecff 22px, #d9ecff 24px, transparent 24px, transparent 67px, #d9ecff 67px, #d9ecff 69px, transparent 69px),
       linear-gradient(225deg, #708090 22px, #d9ecff 22px, #d9ecff 24px, transparent 24px, transparent 67px, #d9ecff 67px, #d9ecff 69px, transparent 69px)0 64px;

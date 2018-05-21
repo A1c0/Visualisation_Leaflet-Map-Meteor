@@ -15,19 +15,22 @@ var mapLeaflet;
 
 const getInfo = (response, row) => {
   let info = "";
+  let photoAs64Base;
   for (const j in response.rows[row]) {
-    if (j != 'id' && j != 'photo') {
-      if (j === 'heure_enr') {
-        info += "<p><b>" +  j + ": </b>" + response.rows[row][j].hour + ":" +
-          response.rows[row][j].minute + ':' + response.rows[row][j].second +
-          "\n" + "</p>";
-      } else if (j === 'date_enr') {
-        info += "<p><b>" + j + ": </b>" + response.rows[row][j].date + "</p>";
-      } else {
-        info += "<p><b>" + j + ": </b>" + response.rows[row][j] + "</p>";
-      }
+    if (j === 'system.blobastext(photo)'){
+      photoAs64Base = response.rows[row][j];
+    } else if (j === 'heure_enr') {
+      info += "<p><b>" + j + ": </b>" + response.rows[row][j].hour + ":" +
+        response.rows[row][j].minute + ':' + response.rows[row][j].second +
+        "\n" + "</p>";
+    } else if (j === 'date_enr') {
+      info += "<p><b>" + j + ": </b>" + response.rows[row][j].date + "</p>";
+    } else {
+      info += "<p><b>" + j + ": </b>" + response.rows[row][j] + "</p>";
     }
   }
+  info += "<p><b>Photo de l'enregistrement:</b></p>" + "<img src=\"data:image/jpeg;base64," + photoAs64Base.replace("\"", "") + "\">";
+  console.log(info);
   return info;
 };
 
@@ -88,11 +91,11 @@ Template.biotopeSelection.events = {
       if (document.getElementById(id_item).checked) {
         data[i].checked = true;
         if (data[i].className === 'habitat') {
-          cqlTab.push("SELECT * from databio.habitat where typeHab = $$" +
+          cqlTab.push("SELECT milieu, typeHab, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.habitat where typeHab = $$" +
             data[i].name + "$$");
           colorTab.push(data[i].value);
           Meteor.call(
-            'execCQL', "SELECT * from databio.habitat where typeHab = $$" +
+            'execCQL', "SELECT milieu, typeHab, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.habitat where typeHab = $$" +
             data[i].name + "$$" + selection + " ALLOW FILTERING;",
             (err, response) => {
               if (err) {
@@ -112,11 +115,11 @@ Template.biotopeSelection.events = {
             });
         }
         else {
-          cqlTab.push("SELECT * from databio.element_remarquable where type = $$" +
+          cqlTab.push("SELECT nomMilieu, typeHab, type, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.element_remarquable where type = $$" +
             data[i].name + "$$");
           colorTab.push(data[i].value);
           Meteor.call(
-            'execCQL', "SELECT * from databio.element_remarquable where type = $$" +
+            'execCQL', "SELECT nomMilieu, typeHab, type, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.element_remarquable where type = $$" +
             data[i].name + "$$" + selection + " ALLOW FILTERING;",
             (err, response) => {
               if (err) {
@@ -141,13 +144,13 @@ Template.biotopeSelection.events = {
         data[i].checked = false;
         if (data[i].className === 'habitat') {
           colorTab.splice(
-            cqlTab.indexOf("SELECT * from databio.habitat where typeHab = $$" +
+            cqlTab.indexOf("SELECT milieu, typeHab, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.habitat where typeHab = $$" +
               data[i].name + "$$"), 1);
           cqlTab.splice(
-            cqlTab.indexOf("SELECT * from databio.habitat where typeHab = $$" +
+            cqlTab.indexOf("SELECT milieu, typeHab, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.habitat where typeHab = $$" +
               data[i].name + "$$"), 1);
           Meteor.call(
-            'execCQL', "SELECT * from databio.habitat where typeHab = $$" +
+            'execCQL', "SELECT milieu, typeHab, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.habitat where typeHab = $$" +
             data[i].name + "$$" + selection + " ALLOW FILTERING;",
             (err, response) => {
               if (err) {
@@ -157,7 +160,7 @@ Template.biotopeSelection.events = {
                 for (const row in response.rows) {
                   let info = getInfo(response, row);
                   //console.log(info + "\n");
-                  cqlTab.push("SELECT * from databio.habitat where typeHab = $$" +
+                  cqlTab.push("SELECT milieu, typeHab, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.habitat where typeHab = $$" +
                     data[i].name + "$$");
 
                   mapLeaflet.removeElement(
@@ -170,13 +173,13 @@ Template.biotopeSelection.events = {
         }
         else {
           colorTab.splice(
-            cqlTab.indexOf("SELECT * from databio.element_remarquable where type = $$" +
+            cqlTab.indexOf("SELECT nomMilieu, typeHab, type, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.element_remarquable where type = $$" +
               data[i].name + "$$"), 1);
           cqlTab.splice(
-            cqlTab.indexOf("SELECT * from databio.element_remarquable where type = $$" +
+            cqlTab.indexOf("SELECT nomMilieu, typeHab, type, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.element_remarquable where type = $$" +
               data[i].name + "$$"), 1);
           Meteor.call(
-            'execCQL', "SELECT * from databio.element_remarquable where type = $$" +
+            'execCQL', "SELECT nomMilieu, typeHab, type, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.element_remarquable where type = $$" +
             data[i].name + "$$" + selection + " ALLOW FILTERING;",
             (err, response) => {
               if (err) {
@@ -214,47 +217,48 @@ Template.biotopeSelection.events = {
     let id_item = $(event.target).attr('id');
     let color = $(event.target).attr('value');
     if (document.getElementById(id_item).checked) {
-      cqlTab.push("SELECT * from databio.habitat where typeHab = $$" +
+      cqlTab.push("SELECT milieu, typeHab, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.habitat where typeHab = $$" +
         name_item + "$$");
       colorTab.push(color);
     }
     else {
       colorTab.splice(
-        cqlTab.indexOf("SELECT * from databio.habitat where typeHab = $$" +
+        cqlTab.indexOf("SELECT milieu, typeHab, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.habitat where typeHab = $$" +
           name_item + "$$"), 1);
       cqlTab.splice(
-        cqlTab.indexOf("SELECT * from databio.habitat where typeHab = $$" +
+        cqlTab.indexOf("SELECT milieu, typeHab, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.habitat where typeHab = $$" +
           name_item + "$$"), 1);
     }
 
-    Meteor.call('execCQL', "SELECT * from databio.habitat where typeHab = $$" +
+    Meteor.call(
+      'execCQL', "SELECT milieu, typeHab, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.habitat where typeHab = $$" +
       name_item + "$$" + selection + " ALLOW FILTERING;", (err, response) => {
-      if (err) {
-        console.log(err);
-      }
-      else {
-        for (const row in response.rows) {
-          let info = getInfo(response, row);
-          //console.log(info + "\n");
-          if (document.getElementById(id_item).checked) {
-            mapLeaflet.addElement(
-              new MapElement(response.rows[row]['gps_lat'],
-                response.rows[row]['gps_long'], color, info));
-            mapLeaflet.updateMap();
-          }
-          else {
-
-            for (const row in response.rows) {
-              mapLeaflet.removeElement(
+        if (err) {
+          console.log(err);
+        }
+        else {
+          for (const row in response.rows) {
+            let info = getInfo(response, row);
+            //console.log(info + "\n");
+            if (document.getElementById(id_item).checked) {
+              mapLeaflet.addElement(
                 new MapElement(response.rows[row]['gps_lat'],
                   response.rows[row]['gps_long'], color, info));
               mapLeaflet.updateMap();
             }
-          }
-        }
+            else {
 
-      }
-    });
+              for (const row in response.rows) {
+                mapLeaflet.removeElement(
+                  new MapElement(response.rows[row]['gps_lat'],
+                    response.rows[row]['gps_long'], color, info));
+                mapLeaflet.updateMap();
+              }
+            }
+          }
+
+        }
+      });
     console.log(cqlTab);
     console.log(colorTab);
     console.log("selection : " + selection);
@@ -273,20 +277,20 @@ Template.biotopeSelection.events = {
     let id_item = $(event.target).attr('id');
     let color = $(event.target).attr('value');
     if (document.getElementById(id_item).checked) {
-      cqlTab.push("SELECT * from databio.element_remarquable where type = $$" +
+      cqlTab.push("SELECT nomMilieu, typeHab, type, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.element_remarquable where type = $$" +
         name_item + "$$");
       colorTab.push(color);
     }
     else {
       colorTab.splice(
-        cqlTab.indexOf("SELECT * from databio.element_remarquable where type = $$" +
+        cqlTab.indexOf("SELECT nomMilieu, typeHab, type, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.element_remarquable where type = $$" +
           name_item + "$$"), 1);
       cqlTab.splice(
-        cqlTab.indexOf("SELECT * from databio.element_remarquable where type = $$" +
+        cqlTab.indexOf("SELECT nomMilieu, typeHab, type, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.element_remarquable where type = $$" +
           name_item + "$$"), 1);
     }
     Meteor.call(
-      'execCQL', "SELECT * from databio.element_remarquable where type = $$" +
+      'execCQL', "SELECT nomMilieu, typeHab, type, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.element_remarquable where type = $$" +
       name_item + "$$" + selection + " ALLOW FILTERING;", (err, response) => {
         if (err) {
           console.log(err);
@@ -331,20 +335,20 @@ Template.biotopeSelection.events = {
     let id_item = $(event.target).attr('id');
     let color = $(event.target).attr('value');
     if (document.getElementById(id_item).checked) {
-      cqlTab.push("SELECT * from databio.element_invasif where type = $$" +
+      cqlTab.push("SELECT type, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.element_invasif where type = $$" +
         name_item + "$$");
       colorTab.push(color);
     }
     else {
       colorTab.splice(
-        cqlTab.indexOf("SELECT * from databio.element_invasif where type = $$" +
+        cqlTab.indexOf("SELECT type, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.element_invasif where type = $$" +
           name_item + "$$"), 1);
       cqlTab.splice(
-        cqlTab.indexOf("SELECT * from databio.element_invasif where type = $$" +
+        cqlTab.indexOf("SELECT type, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region* from databio.element_invasif where type = $$" +
           name_item + "$$"), 1);
     }
     Meteor.call(
-      'execCQL', "SELECT * from databio.element_invasif where type = $$" +
+      'execCQL', "SELECT type, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.element_invasif where type = $$" +
       name_item + "$$" + selection + " ALLOW FILTERING;", (err, response) => {
         if (err) {
           console.log(err);
@@ -450,20 +454,20 @@ Template.specieSelection.events = {
     let id_item = $(event.target).attr('id');
     let color = $(event.target).attr('value');
     if (document.getElementById(id_item).checked) {
-      cqlTab.push("SELECT * from databio.espece where nom_esp = $$" +
+      cqlTab.push("SELECT nom_esp, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.espece where nom_esp = $$" +
         name_item + "$$");
       colorTab.push(color);
     }
     else {
       colorTab.splice(
-        cqlTab.indexOf("SELECT * from databio.espece where nom_esp = $$" +
+        cqlTab.indexOf("SELECT nom_esp, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.espece where nom_esp = $$" +
           name_item + "$$"), 1);
       cqlTab.splice(
-        cqlTab.indexOf("SELECT * from databio.espece where nom_esp = $$" +
+        cqlTab.indexOf("SELECT nom_esp, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.espece where nom_esp = $$" +
           name_item + "$$"), 1);
     }
     Meteor.call(
-      'execCQL', "SELECT * from databio.espece where nom_esp = $$" +
+      'execCQL', "SELECT nom_esp, blobAsText(photo), GPS_lat, GPS_long, GPS_lat_lam, GPS_long_lam, date_enr, heure_enr, region from databio.espece where nom_esp = $$" +
       name_item + "$$" + selection + " ALLOW FILTERING;", (err, response) => {
         if (err) {
           console.log(err);
@@ -769,11 +773,5 @@ Template.exportData.events = {
         hiddenElementEspece.click();
       }
     }, 1);
-  }
-};
-
-Template.testo.events = {
-  'click a' : function () {
-
   }
 };

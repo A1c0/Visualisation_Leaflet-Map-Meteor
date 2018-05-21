@@ -50,18 +50,14 @@
   z-index: 4000;
 }
 #filter {
-  border: 3px groove rgba(0,0,0,1);
+    border: 3px groove rgba(0,0,0,1); 
   bottom: 0%;
   left: 0%;
   position: absolute;
-  height: 25%;
-  width: 100%;
-  background:
-      linear-gradient(135deg, #708090 22px, #d9ecff 22px, #d9ecff 24px, transparent 24px, transparent 67px, #d9ecff 67px, #d9ecff 69px, transparent 69px),
-      linear-gradient(225deg, #708090 22px, #d9ecff 22px, #d9ecff 24px, transparent 24px, transparent 67px, #d9ecff 67px, #d9ecff 69px, transparent 69px)0 64px;
+  height: 10%;
+  width: 60%;
   background-color:#708090;
-  background-size: 64px 128px;
-  z-index: 4000;
+  z-index: 5000;
 }
 
 
